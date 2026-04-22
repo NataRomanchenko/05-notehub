@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { Formik, Form, Field, ErrorMessage } from "formik";
+import * as Yup from "yup";
 import css from "./NoteForm.module.css";
 
 interface Props {
@@ -10,58 +11,42 @@ interface Props {
   onClose: () => void;
 }
 
+const schema = Yup.object({
+  title: Yup.string().required("Required"),
+  content: Yup.string().required("Required"),
+  tag: Yup.string().required(),
+});
+
 export default function NoteForm({ onCreate, onClose }: Props) {
-  const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
-  const [tag, setTag] = useState("Todo");
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    onCreate({ title, content, tag });
-    onClose(); 
-  };
-
   return (
-    <form className={css.form} onSubmit={handleSubmit}>
-      <input
-        className={css.input}
-        placeholder="Title"
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
-      />
+    <Formik
+      initialValues={{ title: "", content: "", tag: "Todo" }}
+      validationSchema={schema}
+      onSubmit={(values) => {
+        onCreate(values);
+        onClose();
+      }}
+    >
+      <Form className={css.form}>
+        <Field name="title" placeholder="Title" />
+        <ErrorMessage name="title" />
 
-      <textarea
-        className={css.textarea}
-        placeholder="Content"
-        value={content}
-        onChange={(e) => setContent(e.target.value)}
-      />
+        <Field as="textarea" name="content" placeholder="Content" />
+        <ErrorMessage name="content" />
 
-      <select
-        className={css.select}
-        value={tag}
-        onChange={(e) => setTag(e.target.value)}
-      >
-        <option value="Todo">Todo</option>
-        <option value="Work">Work</option>
-        <option value="Personal">Personal</option>
-        <option value="Shopping">Shopping</option>
-      </select>
+        <Field as="select" name="tag">
+          <option value="Todo">Todo</option>
+          <option value="Work">Work</option>
+          <option value="Personal">Personal</option>
+          <option value="Shopping">Shopping</option>
+          <option value="Meeting">Meeting</option>
+        </Field>
 
-      <div className={css.actions}>
-        <button
-          type="button"
-          className={css.cancel}
-          onClick={onClose}
-        >
+        <button type="submit">Create note</button>
+        <button type="button" onClick={onClose}>
           Cancel
         </button>
-
-        <button type="submit" className={css.submit}>
-          Create note
-        </button>
-      </div>
-    </form>
+      </Form>
+    </Formik>
   );
 }

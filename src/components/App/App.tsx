@@ -6,14 +6,17 @@ import {
 } from "@tanstack/react-query";
 import { useDebouncedCallback } from "use-debounce";
 
-import { fetchNotes, deleteNote } from "../../services/noteService";
+import {
+  fetchNotes,
+  deleteNote,
+  createNote,
+} from "../../services/noteService";
 
 import NoteList from "../NoteList/NoteList";
 import SearchBox from "../SearchBox/SearchBox";
 import Pagination from "../Pagination/Pagination";
 import Modal from "../Modal/Modal";
 import NoteForm from "../NoteForm/NoteForm";
-import { createNote } from "../../services/noteService";
 
 export default function App() {
   const queryClient = useQueryClient();
@@ -26,36 +29,40 @@ export default function App() {
     setSearch(value);
     setPage(1);
   }, 500);
-  
-const createMutation = useMutation({
-  mutationFn: createNote,
-  onSuccess: () => {
-    queryClient.invalidateQueries({ queryKey: ["notes"] });
-  },
-});
+
+  // ✅ CREATE
+  const createMutation = useMutation({
+    mutationFn: createNote,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["notes"] });
+    },
+  });
+
   const handleCreate = (data: {
-  title: string;
-  content: string;
-  tag: string;
-}) => {
-  createMutation.mutate(data);
-};
+    title: string;
+    content: string;
+    tag: string;
+  }) => {
+    createMutation.mutate(data);
+  };
+
+  // ✅ GET
   const { data, isLoading, isError } = useQuery({
     queryKey: ["notes", page, search],
     queryFn: () => fetchNotes(page, search),
+    placeholderData: (prev) => prev,
   });
 
-  const mutation = useMutation({
+  // ✅ DELETE
+  const deleteMutation = useMutation({
     mutationFn: deleteNote,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["notes"] });
     },
   });
 
-  
-
   const handleDelete = (id: string) => {
-    mutation.mutate(id);
+    deleteMutation.mutate(id);
   };
 
   return (
@@ -90,10 +97,10 @@ const createMutation = useMutation({
 
       {isModalOpen && (
         <Modal onClose={() => setIsModalOpen(false)}>
-         <NoteForm
-  onCreate={handleCreate}
-  onClose={() => setIsModalOpen(false)}
-/>
+          <NoteForm
+            onCreate={handleCreate}
+            onClose={() => setIsModalOpen(false)}
+          />
         </Modal>
       )}
     </div>
