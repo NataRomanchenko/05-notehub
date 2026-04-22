@@ -18,7 +18,7 @@ interface FormValues {
 const validationSchema = Yup.object({
   title: Yup.string().min(3).max(50).required("Required"),
   content: Yup.string().max(500),
-  tag: Yup.string().oneOf(["Todo", "Work", "Personal", "Meeting"]).required(),
+  tag: Yup.string().oneOf(["Todo", "Work", "Personal", "Meeting", "Shopping"]).required(),
 });
 
 export default function NoteForm({ onClose }: NoteFormProps) {
@@ -33,7 +33,7 @@ export default function NoteForm({ onClose }: NoteFormProps) {
   });
 
   return (
-    <Formik
+    <Formik<FormValues>
       initialValues={{
         title: "",
         content: "",
@@ -67,6 +67,7 @@ export default function NoteForm({ onClose }: NoteFormProps) {
             <option value="Work">Work</option>
             <option value="Personal">Personal</option>
             <option value="Meeting">Meeting</option>
+            <option value="Shopping">Shopping</option>
           </Field>
         </div>
 
