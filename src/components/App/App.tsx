@@ -6,14 +6,14 @@ import {
 } from "@tanstack/react-query";
 import { useDebouncedCallback } from "use-debounce";
 
-import { fetchNotes, deleteNote } from "./services/noteService";
+import { fetchNotes, deleteNote } from "../../services/noteService";
 
-import NoteList from "./components/NoteList/NoteList";
-import SearchBox from "./components/SearchBox/SearchBox";
-import Pagination from "./components/Pagination/Pagination";
-import Modal from "./components/Modal/Modal";
-import NoteForm from "./components/NoteForm/NoteForm";
-import { createNote } from "./services/noteService";
+import NoteList from "../NoteList/NoteList";
+import SearchBox from "../SearchBox/SearchBox";
+import Pagination from "../Pagination/Pagination";
+import Modal from "../Modal/Modal";
+import NoteForm from "../NoteForm/NoteForm";
+import { createNote } from "../../services/noteService";
 
 export default function App() {
   const queryClient = useQueryClient();
